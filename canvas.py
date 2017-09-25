@@ -70,5 +70,4 @@ def extract(zipname) :
         if late : 
             subprocess.run('touch ' + os.path.join(userdir, '__late__'), shell=True)
 
-    #subprocess.run('tree', cwd=user_temp_dir, shell=True)
     return Path(user_temp_dir)

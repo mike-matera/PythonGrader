@@ -18,20 +18,27 @@ def main() :
     if len(sys.argv) == 3 :
         userfilter = sys.argv[2]
 
-    test = 'tests/project1.py'
+    test = 'tests/test_project3.py'
     workdir = canvas.extract(sys.argv[1])
 
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setLevel(logging.DEBUG)
-    logger.addHandler(ch)
+    os.environ['PYTHONPATH'] = Path(__file__).resolve().parent.as_posix()
 
-    os.environ['PYTHONPATH'] = Path(__file__).resolve().parent.as_posix() 
+    os.makedirs('results', exist_ok=True)
     for user in workdir.iterdir() :
-        logger.info('Grading user: ' + user.name)
+        if userfilter is not None and user.name != userfilter :
+            continue
+        print('Grading user: ' + user.name)
         shutil.copy2(test, user.as_posix())
-        subprocess.run('python project1.py', cwd=user.as_posix(), shell=True, check=True)
+        logdir = os.path.join(user.as_posix(), 'logs')
+        logfile = os.path.join(logdir, 'grader.log')
+        os.makedirs(logdir)
+        with open(logfile, 'a') as log :
+            subprocess.run('python test_project3.py', cwd=user.as_posix(), shell=True, check=True, stdout=log, stderr=log)
+            subprocess.run('tree', cwd=user.as_posix(), shell=True, check=True, stdout=log, stderr=log)
+        
+
+        subprocess.run('zip -r ' + user.name + '.zip .', cwd=user.as_posix(), shell=True, check=True, stdout=subprocess.DEVNULL)
+        shutil.copy2(os.path.join(user.as_posix(), user.name + '.zip'), 'results')
 
     
 if __name__=="__main__":
