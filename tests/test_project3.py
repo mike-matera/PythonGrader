@@ -23,16 +23,18 @@ class Project3(Project) :
             test.sendline(f"{a}")
             test.sendline(f"{b}")
 
-            self.assertNotEqual(0, test.expect([pexpect.EOF, "a is {}".format(a)]))
-            self.assertNotEqual(0, test.expect([pexpect.EOF, "b is {}".format(b)]))
-            self.assertNotEqual(0, test.expect([pexpect.EOF, "{}+{}\s*=\s*{}".format(a,b,a+b)]))
+            self.assertNotEqual(0, test.expect([pexpect.EOF, "a\s+is\s+{}".format(a)]))
+            self.assertNotEqual(0, test.expect([pexpect.EOF, "b\s+is\s+{}".format(b)]))
+            self.assertNotEqual(0, test.expect([pexpect.EOF, "{}\+{}\s*=\s*{}".format(a,b,a+b)]))
             self.assertNotEqual(0, test.expect([pexpect.EOF, "{}-{}\s*=\s*{}".format(a,b,a-b)]))
-            self.assertNotEqual(0, test.expect([pexpect.EOF, "{}*{}\s*=\s*{}".format(a,b,a*b)]))
+            self.assertNotEqual(0, test.expect([pexpect.EOF, "{}\*{}\s*=\s*{}".format(a,b,a*b)]))
             self.assertNotEqual(0, test.expect([pexpect.EOF, "{}/{}\s*=\s*{}".format(a,b,a/b)]))
             self.assertNotEqual(0, test.expect([pexpect.EOF, "{}%{}\s*=\s*{}".format(a,b,a%b)]))
             self.assertNotEqual(0, test.expect([pexpect.EOF, "{}<{}\s*=\s*{}".format(a,b,a<b)]))
             self.assertNotEqual(0, test.expect([pexpect.EOF, "{}>{}\s*=\s*{}".format(a,b,a>b)]))
             self.assertNotEqual(0, test.expect([pexpect.EOF, "{}=={}\s*=\s*{}".format(a,b,a==b)]))
+
+        self.check_docstring(filename)
 
 
 if __name__ == '__main__' : 

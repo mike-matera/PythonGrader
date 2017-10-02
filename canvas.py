@@ -56,15 +56,15 @@ def extract(zipname) :
 
         shutil.copy2(f.as_posix(), os.path.join(userdir, filename))
         if Path(filename).suffix == '.zip' : 
-            subprocess.run('unzip ' + filename, cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
+            subprocess.run('unzip "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
             os.unlink(os.path.join(userdir, filename))
 
         elif Path(filename).suffix == '.gz' :
-            subprocess.run('tar -xvf ' + filename, cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
+            subprocess.run('tar -xvf "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
             os.unlink(os.path.join(userdir, filename))
 
         elif Path(filename).suffix == '.7z' :
-            subprocess.run('7zr x ' + filename, cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
+            subprocess.run('7zr x "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
             os.unlink(os.path.join(userdir, filename))
 
         if late : 

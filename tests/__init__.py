@@ -28,7 +28,7 @@ def generate_exercises(cl, *exes) :
 
 class Project(unittest.TestCase) : 
         
-    def test_is_late(self) :
+    def test_is_not_late(self) :
         self.assertIsNone(self.find_file('__late__'))
                      
     def find_file(self, name) : 
@@ -40,7 +40,9 @@ class Project(unittest.TestCase) :
     def do_exercise(self, name) :     
         py_file = self.find_file(name)        
         self.assertIsNotNone(py_file, 'You are missing exercise file "{}"'.format(name))
-        with open(py_file, 'r') as ex :
+        self.check_docstring(py_file)
+        
+    def check_docstring(self, filename):
+        with open(filename, 'r') as ex :
             contents = ex.read()
-
-        self.assertIsNotNone(re.search(r'cis-15', contents, re.I), "Your exercise file doesn't seem to have the right docstring")
+        self.assertIsNotNone(re.search(r'cis(\s*|-)15', contents, re.I), "Your source file doesn't seem to have the right docstring")
