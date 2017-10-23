@@ -36,6 +36,10 @@ def main() :
         with open(logfile, 'a') as log :
             subprocess.run('python ' + test, cwd=user.as_posix(), shell=True, check=True, stdout=log, stderr=log)
             shutil.rmtree(testdir)
+            try:
+                os.remove(os.path.join(user.as_posix(), 'geckodriver.log'))
+            except:
+                pass 
             subprocess.run('tree', cwd=user.as_posix(), shell=True, check=True, stdout=log, stderr=log)
         subprocess.run('zip -r ' + user.name + '.zip .', cwd=user.as_posix(), shell=True, check=True, stdout=subprocess.DEVNULL)
         shutil.copy2(os.path.join(user.as_posix(), user.name + '.zip'), 'results')

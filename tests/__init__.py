@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from pathlib import Path 
 
 def make_method(testbase) :
-    test_name = 'test_exercise_{}'.format(testbase)
+    test_name = 'test_1_exercise_{}'.format(testbase)
     def test_exercise(self) :
         self.do_exercise(testbase + '.py')
     return test_name, test_exercise 
@@ -22,15 +22,16 @@ def generate_exercises(cl, *exes) :
         for ex in exes : 
             testbase = 'ex{}'.format(ex)
             test_name, test_method = make_method(testbase)
-            setattr(cl, test_name, test_method) 
+            setattr(cl, test_name, test_method)
+        # Add the late test.
+        def test_is_not_late(self) :
+            self.assertIsNone(self.find_file('__late__'))
+        setattr(cl, 'test_0_is_not_late', test_is_not_late)
         return cl
     return decorator
 
 class Project(unittest.TestCase) : 
-        
-    def test_is_not_late(self) :
-        self.assertIsNone(self.find_file('__late__'))
-                     
+                             
     def find_file(self, name) : 
         p = Path(os.getcwd())
         for cand in p.glob('**/' + name) :

@@ -4,6 +4,7 @@ import sys
 import pexpect
 import random
 import os
+import time
 
 from selenium import webdriver
 
@@ -67,7 +68,7 @@ class Project4_Adv(Project):
         self.driver.close()
         
     def test_web(self):
-        os.putenv('MADLIB', 'this is {verb} test fun {adjective} test blah {noun}')
+        os.putenv('MADLIB', 'this is {verb} test fun {adverb} test {noun}')
         os.putenv('FLASK_DEBUG', '1')
         filename = self.find_file('project4_adv.py')
         wd = os.path.dirname(filename)
@@ -75,13 +76,19 @@ class Project4_Adv(Project):
             test = pexpect.spawnu('python  project4_adv.py', logfile=log, cwd=wd)
             result = test.expect([pexpect.EOF, '0.0.0.0'])
             self.driver.get('http://localhost:8080/')
-            inputs = self.driver.find_elements_by_tag_name('input')
-            for field in inputs :
-                field.send_keys("blah blah")
 
-            self.driver.get_screenshot_as_file('logs/web_form.png')
-            self.driver.find_element_by_tag_name('form').submit()
-            self.driver.implicitly_wait(5) 
+            try:
+                inputs = self.driver.find_elements_by_tag_name('input')
+                inputs[0].send_keys('compile')
+                inputs[1].send_keys('crumily')
+                inputs[2].send_keys('keyboard')
+            
+                self.driver.get_screenshot_as_file('logs/web_form.png')
+                self.driver.find_element_by_tag_name('form').submit()
+            except:
+                self.fail("I couldn't understand the form you sent me.")
+
+            time.sleep(1)
             self.driver.get_screenshot_as_file('logs/completed_madlib.png')
 
 if __name__ == '__main__' : 

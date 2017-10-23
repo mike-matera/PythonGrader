@@ -55,17 +55,26 @@ def extract(zipname) :
         os.makedirs(userdir, exist_ok=True)
 
         shutil.copy2(f.as_posix(), os.path.join(userdir, filename))
-        if Path(filename).suffix == '.zip' : 
-            subprocess.run('unzip "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
-            os.unlink(os.path.join(userdir, filename))
+        if Path(filename).suffix == '.zip' :
+            try :
+                subprocess.run('unzip "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
+                os.unlink(os.path.join(userdir, filename))
+            except :
+                print ('MALFORMED ZIP for user', userdir)
 
         elif Path(filename).suffix == '.gz' :
-            subprocess.run('tar -xvf "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
-            os.unlink(os.path.join(userdir, filename))
+            try:
+                subprocess.run('tar -xvf "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
+                os.unlink(os.path.join(userdir, filename))
+            except :
+                print ('MALFORMED TAR.GZ for user', userdir)
 
         elif Path(filename).suffix == '.7z' :
-            subprocess.run('7zr x "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
-            os.unlink(os.path.join(userdir, filename))
+            try:
+                subprocess.run('7zr x "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
+                os.unlink(os.path.join(userdir, filename))
+            except :
+                print ('MALFORMED 7Z for user', userdir)
 
         if late : 
             subprocess.run('touch ' + os.path.join(userdir, '__late__'), shell=True)
