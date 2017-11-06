@@ -41,7 +41,7 @@ def extract(zipname) :
             late = True
             parts.pop(0)
 
-        while re.match('\d+', parts[0]) is not None :
+        while re.match('^\d+$', parts[0]) is not None :
             parts.pop(0)
 
         filename = '_'.join(parts)        
@@ -62,7 +62,7 @@ def extract(zipname) :
             except :
                 print ('MALFORMED ZIP for user', userdir)
 
-        elif Path(filename).suffix == '.gz' :
+        elif Path(filename).suffix == '.gz' or Path(filename).suffix == '.tar' :
             try:
                 subprocess.run('tar -xvf "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
                 os.unlink(os.path.join(userdir, filename))
