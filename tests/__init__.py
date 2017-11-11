@@ -54,7 +54,16 @@ class Project(unittest.TestCase) :
         for cand in p.glob('**/' + name) :
             return cand
         return None
-        
+
+    def import_project(self, filename) :
+        spec = importlib.util.spec_from_file_location('project', filename)
+        proj = importlib.util.module_from_spec(spec)
+        stdin = sys.stdin
+        sys.stdin = None 
+        spec.loader.exec_module(proj)
+        sys.stdin = stdin
+        return proj
+    
     def do_exercise(self, name) :     
         py_file = self.find_file(name)        
         self.assertIsNotNone(py_file, 'You are missing exercise file "{}"'.format(name))

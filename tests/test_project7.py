@@ -18,10 +18,7 @@ class Project7(Project) :
 
     def setUp(self) :
         filename = self.find_file('project7.py')
-        spec = importlib.util.spec_from_file_location("project7", filename)
-        self.proj = importlib.util.module_from_spec(spec)
-        sys.stdin = None 
-        spec.loader.exec_module(self.proj)
+        self.assertIsNotNone(filename, "I can't find your project file (project7.py)")       self.proj = self.import_project(filename)
 
     def test_0_check_docstring(self):
         filename = self.find_file('project7.py')
