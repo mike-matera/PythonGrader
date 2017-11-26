@@ -28,7 +28,7 @@ class Project8(Project) :
         self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
 
         with open('logs/test_1_valid_sim.out', 'a') as log :
-            test = pexpect.spawnu('python ' + filename.as_posix(), logfile=log, encoding='utf-8')
+            test = pexpect.spawnu('python "' + filename.as_posix() + '"', logfile=log, encoding='utf-8')
             turns = random.randrange(100, 100000)
             test.sendline(str(turns))
             try : 
@@ -50,7 +50,7 @@ class Project8(Project) :
         self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
 
         with open('logs/test_2_bogus_input.out', 'a') as log :
-            test = pexpect.spawnu('python ' + filename.as_posix(), logfile=log, encoding='utf-8')
+            test = pexpect.spawnu('python "' + filename.as_posix() + '"', logfile=log, encoding='utf-8')
             turns = random.randrange(200, 100000)
             test.sendline('this')
             test.sendline('is')
