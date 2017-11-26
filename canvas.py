@@ -62,7 +62,7 @@ def extract(zipname) :
             except :
                 print ('MALFORMED ZIP for user', userdir)
 
-        elif Path(filename).suffix == '.gz' :
+        elif Path(filename).suffix == '.tar.gz' or Path(filename).suffix == '.tar':
             try:
                 subprocess.run('tar -xvf "' + filename + '"', cwd=userdir, shell=True, check=True, stdout=subprocess.DEVNULL)
                 os.unlink(os.path.join(userdir, filename))
