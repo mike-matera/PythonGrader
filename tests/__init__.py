@@ -33,10 +33,10 @@ def make_method(testbase) :
         self.do_exercise(testbase + '.py')
     return test_name, test_exercise 
 
-def generate_exercises(cl, *exes) :
-    '''Decorator that adds test functions to classes that are derived from unittest.TestCase''' 
+def generate_exercises(*exes) :    
+    '''Decorator that adds test functions to classes that are derived from unittest.TestCase'''    
     def decorator(cl):
-        for ex in exes : 
+        for ex in exes :
             testbase = 'ex{}'.format(ex)
             test_name, test_method = make_method(testbase)
             setattr(cl, test_name, test_method)
