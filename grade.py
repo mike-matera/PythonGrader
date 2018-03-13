@@ -47,6 +47,18 @@ def main() :
             subprocess.run('python ' + test, cwd=user.as_posix(), shell=True, check=True, stdout=logstream, stderr=logstream)
             logstream.write('----------------------------------------------------------------------\n')
             shutil.rmtree(testdir)
+            if debug :
+                logpath = Path(logdir)
+                for out_logfile in logpath.glob('*.out') :
+                    logstream.write('\n' * 2) 
+                    logstream.write('=' * 20)
+                    logstream.write('\n')
+                    logstream.write(f'file: {out_logfile}\n')
+                    logstream.write(('-' * 80) + '\n')
+                    with open (out_logfile.as_posix()) as lf :
+                        logstream.write(lf.read())
+                    print ('=== End of File ===')
+                logstream.write('\n' * 3)
             logstream.write(f"These are the files I see:\n")
             logstream.flush()
             subprocess.run('tree', cwd=user.as_posix(), shell=True, check=True, stdout=logstream, stderr=logstream)

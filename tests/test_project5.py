@@ -14,11 +14,19 @@ from tests import Project, generate_exercises
 class Project5(Project) : 
 
     def test_2_check_docstring(self):
+        '''Your program should have a valid docstring. 
+Check the lecture notes for how to properly format a docstring.
+'''
+        self.banner("Looking for your program's docstring.")
         filename = self.find_file('project5.py')
         self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
         self.check_docstring(filename)
 
     def test_3_check_prompts(self) :
+        '''Your program should prompt for the word types that it reads in lines 2, 3 and 4
+of the madlib input file.'''
+        self.banner('Checking for the expected word prompts.')
+
         filename = self.find_file('project5.py')
         self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
 
@@ -33,7 +41,7 @@ class Project5(Project) :
                 f.write(w + '\n')
 
         with open('logs/test_3_check_prompts.out', 'a') as log :
-            test = pexpect.spawnu('python ' + filename.as_posix() + ' ' + self.txtfile, logfile=log)
+            test = pexpect.spawnu('python "' + filename.as_posix() + '" ' + self.txtfile, logfile=log, echo=False)
             for i in range(3) :
                 got = test.expect([pexpect.TIMEOUT, self.types[i]], timeout=1)
                 if got == 0 :
@@ -43,6 +51,8 @@ class Project5(Project) :
         
 
     def test_4_check_output(self) :
+        '''Your program did not produce the madlib that I expected. See the log files.''' 
+        self.banner('Checking for the expected madlib.')
         filename = self.find_file('project5.py')
         self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
         
@@ -52,7 +62,7 @@ class Project5(Project) :
         self.values = ['foo', 'bar', 'baz']
 
         with open('logs/test_4_check_outupt.out', 'a') as log :
-            test = pexpect.spawnu('python ' + filename.as_posix() + ' ' + self.txtfile, logfile=log)
+            test = pexpect.spawnu('python "' + filename.as_posix() + '" ' + self.txtfile, logfile=log, echo=False)
 
             for i in range(3) :
                 test.sendline(self.values[i])
@@ -63,7 +73,8 @@ class Project5(Project) :
             test.close()
 
     def test_5_check_file(self) :
-        
+        '''Your program didn't create and output file with the .complete suffix.'''
+        self.banner('Checking the output file.') 
         self.madlib = 'blah1 {} blah2 {} blah3 {} blah4'
         self.txtfile = 'test_madlib.txt'
         self.types = ['word_typ1', 'word_typ2', 'word_typ3']
@@ -89,6 +100,7 @@ class Project5_Adv(Project):
         self.driver.close()
         
     def test_web(self):
+        self.banner('Executing the advanced project. Look for screenshots in the logs directory.')
         os.putenv('FLASK_DEBUG', '1')
         filename = self.find_file('project5_adv.py')
         wd = os.path.dirname(filename)
@@ -141,5 +153,5 @@ class Project5_Adv(Project):
         
             
 if __name__ == '__main__' : 
-    unittest.main(verbosity=2, exit=False)
+    unittest.main(verbosity=0, exit=False)
 

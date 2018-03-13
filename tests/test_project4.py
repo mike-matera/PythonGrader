@@ -13,29 +13,39 @@ from tests import Project, generate_exercises
 @generate_exercises(11, 12, 13, 14)
 class Project4(Project) : 
 
-    def test_correct_madlib(self):
+    def test_02_correct_madlib(self):
         filename = self.find_file('project4.py')
         self.assertIsNotNone(filename, "I can't find your project file (project4.py)")
 
         madlib = 'this is {verb} test fun {adjective} test blah {noun}'
-        cmdline = 'python ' + filename.as_posix() + " '" + madlib + "'"
+        cmdline = 'python "' + filename.as_posix() + "\" '" + madlib + "'"
         verb = '123verb'
         noun = '53noun'
         adjective = '34adjective'
+        solution = madlib.format(noun=noun, verb=verb, adjective=adjective)
         
         with open('logs/test_correct_madlib.out', 'a') as log :
-            test = pexpect.spawnu(cmdline, logfile=log)
+            test = pexpect.spawnu(cmdline, logfile=log, echo=False)
 
-            test.sendline(noun)
-            test.sendline(verb)
-            test.sendline(adjective)
+            for i in range(1,4) :
+                got = test.expect([pexpect.EOF, '(?i)noun', '(?i)verb', '(?i)adjective'])
+                if got == 0 :
+                    self.fail('Your program never said "noun" "verb" or "ajective"')
+                elif got == 1 :
+                    test.sendline(noun)
+                elif got == 2 : 
+                    test.sendline(verb)
+                elif got == 3 :
+                    test.sendline(adjective)
 
-            self.assertNotEqual(0, test.expect([pexpect.EOF, madlib.format(noun=noun, verb=verb, adjective=adjective)]))
-
+            got = test.expect([pexpect.EOF, solution])
+            if got == 0 :
+                self.fail("I never saw the complteted madlib: "+ solution)
+            
         self.check_docstring(filename)
 
 
-    def test_bogus_madlib(self):
+    def __test_bogus_madlib(self):
         filename = self.find_file('project4.py')
         self.assertIsNotNone(filename, "I can't find your project file (project4.py)")
 
@@ -92,5 +102,5 @@ class Project4_Adv(Project):
             self.driver.get_screenshot_as_file('logs/completed_madlib.png')
 
 if __name__ == '__main__' : 
-    unittest.main(verbosity=2, exit=False)
+    unittest.main(verbosity=0, exit=False)
 
