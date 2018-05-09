@@ -40,7 +40,11 @@ def main() :
             else:
                 logstream = log
             logstream.write(('=' * 80) + '\n')
-            logstream.write(f"Hello {user.name}. I am the automatic grader.\n")
+            logstream.write(f"Hello {user.name}!\n\n")
+            logstream.write(f"I'm a robot that tests your program.\n")
+            logstream.write(f"Mike writes a bunch of tests and I run them to see if your\n")
+            logstream.write(f"program meets all of the specified requirements. Mike decides\n")
+            logstream.write(f"your final grade. Robots aren't good at that kind of thing.\n\n")
             logstream.write(f"Here are your test results:\n")
             logstream.write('----------------------------------------------------------------------\n')
             logstream.flush()
