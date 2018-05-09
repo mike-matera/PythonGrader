@@ -8,78 +8,19 @@ import time
 import importlib
 import importlib.util
 import tempfile
+import inspect
 
 from selenium import webdriver
 
 from tests import Project, generate_exercises, io_control
 
+from test_project5 import __Project5
+
+class Project5Regrade(__Project5, Project) :
+    def setUp(self) :
+        self.projfile = 'project6.py'
+
 @generate_exercises(18, 19, 20, 21)
-class Project5Recheck(Project) : 
-
-    def test_2_check_docstring(self):
-        filename = self.find_file('project6.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
-        self.check_docstring(filename)
-
-    def test_3_check_prompts(self) :
-        filename = self.find_file('project6.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
-
-        self.madlib = 'blah1 {} blah2 {} blah3 {} blah4'
-        self.txtfile = 'test_madlib.txt'
-        self.types = ['word_typ1', 'word_typ2', 'word_typ3']
-        self.values = ['foo', 'bar', 'baz']
-        
-        with open(self.txtfile, 'w') as f :
-            f.write(self.madlib + '\n')
-            for w in self.types :
-                f.write(w + '\n')
-
-        with open('logs/test_3_check_prompts.out', 'a') as log :
-            test = pexpect.spawnu('python ' + filename.as_posix() + ' ' + self.txtfile, logfile=log)
-            for i in range(3) :
-                got = test.expect([pexpect.TIMEOUT, self.types[i]], timeout=1)
-                if got == 0 :
-                    self.fail('You never prompted me for a ' + self.types[i])
-                test.sendline(self.values[i])
-            test.close()
-        
-
-    def test_4_check_output(self) :
-        filename = self.find_file('project6.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
-        
-        self.madlib = 'blah1 {} blah2 {} blah3 {} blah4'
-        self.txtfile = 'test_madlib.txt'
-        self.types = ['word_typ1', 'word_typ2', 'word_typ3']
-        self.values = ['foo', 'bar', 'baz']
-
-        with open('logs/test_4_check_outupt.out', 'a') as log :
-            test = pexpect.spawnu('python ' + filename.as_posix() + ' ' + self.txtfile, logfile=log)
-
-            for i in range(3) :
-                test.sendline(self.values[i])
-
-            got = test.expect([pexpect.TIMEOUT, pexpect.EOF, self.madlib.format(*self.values)], timeout=1)
-            if got < 2 :
-                self.fail("I didn't see the completed madlib printed.")
-            test.close()
-
-    def test_5_check_file(self) :
-        
-        self.madlib = 'blah1 {} blah2 {} blah3 {} blah4'
-        self.txtfile = 'test_madlib.txt'
-        self.types = ['word_typ1', 'word_typ2', 'word_typ3']
-        self.values = ['foo', 'bar', 'baz']
-
-        self.outfile = self.txtfile + '.complete'
-        
-        self.assertTrue(os.path.isfile(self.outfile), "I can't file the output file " + self.outfile)
-        with open (self.outfile) as f :
-            line = f.readline().strip()
-
-        self.assertEqual(line, self.madlib.format(*self.values), "The madlib you saved doesn't match what I expected.")
-
 class Project6(Project):
 
     def setUp(self) :
@@ -90,7 +31,9 @@ class Project6(Project):
         self.madlib = ['test1 {} test2 {} test3 {} test4\n', 'foo\n', 'bar\n', 'bak\n']        
         self.words = ['abc\n', 'def\n', 'ghi\n']
         
-    def test_0_docstrings(self):
+    def test_2_docstrings(self):
+        '''Your functions should each have docstrings.'''
+        self.banner("Checking your functions for docstrings.")
         self.assertIsNotNone(self.proj.read_madlib_file.__doc__,
                            "Your read_madlib_file() function doesn't have a docstring.")
         
@@ -100,7 +43,9 @@ class Project6(Project):
         self.assertIsNotNone(self.proj.display_madlib.__doc__,
                             "Your display_madlib() function doesn't have a docstring.")
 
-    def test_1_read_madlib_file(self):
+    def test_3_read_madlib_file(self):
+        '''The read_madlib_file() function did not return what I expexed. See the log files.'''
+        self.banner("Testing your read_madlib_file() function.")
         infile = os.path.join('logs', 'read_madlib_file_input.txt')
         outfile = os.path.join('logs', 'read_madlib_file_output.txt')
         with open(infile, 'w') as madfile :
@@ -109,16 +54,20 @@ class Project6(Project):
 
         got = self.proj.read_madlib_file(infile)
         for i, g in enumerate(got) :
-            self.assertEqual(g.strip(), self.madlib[i].strip())
+            self.assertEqual(g.strip(), self.madlib[i].strip(), "")
 
-    def test_2_do_madlib_input(self) :
+    def test_4_do_madlib_input(self) :
+        '''The do_madlib_input() function did not return the words I entered.''' 
+        self.banner("Testing your do_madlib_input() function.")
         with io_control(''.join(self.words)) as stdout :
             words = self.proj.do_madlib_input(*self.madlib[1:])
 
         for i, word in enumerate(words) :
             self.assertEqual(word.strip(), self.words[i].strip())
 
-    def test_3_display_madlib(self):
+    def test_5_display_madlib(self):
+        '''The display_madlib() function didn't work as expected.''' 
+        self.banner("Testing your display_madlib() function.")
         outfile = os.path.join('logs', 'display_madlib_output.txt')
         madlib = 'Foo Bar Bak Baz'
         with io_control('') as stdout :
@@ -198,5 +147,5 @@ class Project6_Adv(Project):
         
             
 if __name__ == '__main__' : 
-    unittest.main(verbosity=2, exit=False)
+    unittest.main(verbosity=0, exit=False)
 

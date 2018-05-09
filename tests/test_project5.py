@@ -5,21 +5,21 @@ import pexpect
 import random
 import os
 import time
+import inspect
 
 from selenium import webdriver
 
 from tests import Project, generate_exercises
 
-@generate_exercises(15, 16, 17)
-class Project5(Project) : 
+class __Project5() : 
 
     def test_2_check_docstring(self):
         '''Your program should have a valid docstring. 
 Check the lecture notes for how to properly format a docstring.
 '''
-        self.banner("Looking for your program's docstring.")
-        filename = self.find_file('project5.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
+        self.banner("Looking for your program's docstring.")        
+        filename = self.find_file(self.projfile)
+        self.assertIsNotNone(filename, "I can't find your project file (" + self.projfile + ")")
         self.check_docstring(filename)
 
     def test_3_check_prompts(self) :
@@ -27,8 +27,8 @@ Check the lecture notes for how to properly format a docstring.
 of the madlib input file.'''
         self.banner('Checking for the expected word prompts.')
 
-        filename = self.find_file('project5.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
+        filename = self.find_file(self.projfile)
+        self.assertIsNotNone(filename, "I can't find your project file (" + self.projfile + ")")
 
         self.madlib = 'blah1 {} blah2 {} blah3 {} blah4'
         self.txtfile = 'test_madlib.txt'
@@ -53,8 +53,8 @@ of the madlib input file.'''
     def test_4_check_output(self) :
         '''Your program did not produce the madlib that I expected. See the log files.''' 
         self.banner('Checking for the expected madlib.')
-        filename = self.find_file('project5.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project5.py)")
+        filename = self.find_file(self.projfile)
+        self.assertIsNotNone(filename, "I can't find your project file (" + self.projfile + ")")
         
         self.madlib = 'blah1 {} blah2 {} blah3 {} blah4'
         self.txtfile = 'test_madlib.txt'
@@ -88,6 +88,12 @@ of the madlib input file.'''
 
         self.assertEqual(line, self.madlib.format(*self.values), "The madlib you saved doesn't match what I expected.")
         
+@generate_exercises(15, 16, 17)
+class Project5(__Project5, Project) :
+    def setUp(self) :
+        self.projfile = 'project5.py'
+        
+
 class Project5_Adv(Project):
 
     def setUp(self) :
