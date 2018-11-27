@@ -14,11 +14,11 @@ from selenium import webdriver
 from tests import Project, generate_exercises, io_control
 
 @generate_exercises(29, 30, 31)
-class Project7(Project) :
+class Project8(Project) :
 
     def setUp(self) :
-        filename = self.find_file('project7.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project7.py)")
+        filename = self.find_file('project8.py')
+        self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
         self.proj = self.import_project(filename)
 
     def test_2_check_docstring(self):
@@ -26,15 +26,15 @@ class Project7(Project) :
 Check the lecture notes for how to properly format a docstring.
 '''
         self.banner("Looking for your program's docstring.")        
-        filename = self.find_file('project7.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project7.py)")
+        filename = self.find_file('project8.py')
+        self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
         self.check_docstring(filename)
 
     def test_3_play_game(self) :
         '''I had a problem playing the Monty Hall game'''
         self.banner("Checking game play.")        
-        filename = self.find_file('project7.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project7.py)")
+        filename = self.find_file('project8.py')
+        self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
 
         with open('logs/test_1_play_game.out', 'a') as log :
             test = pexpect.spawnu('python "' + filename.as_posix() + '"', logfile=log, encoding='utf-8')
@@ -44,7 +44,7 @@ Check the lecture notes for how to properly format a docstring.
             got = test.expect([pexpect.TIMEOUT, '(?i)goat', '(?i)car'], timeout=1)
             test.close()
 
-            test = pexpect.spawnu('python ' + filename.as_posix(), logfile=log, encoding='utf-8')
+            test = pexpect.spawnu('python "' + filename.as_posix() + '"', logfile=log, encoding='utf-8')
             door = random.randrange(1, 4)
             test.sendline(str(door))
             test.sendline('switch')            
@@ -69,7 +69,7 @@ Check the lecture notes for how to properly format a docstring.
         self.assertIsNotNone(self.proj.has_won.__doc__,
                            "Your has_won() function doesn't have a docstring.")
 
-    def test_5_random_door(self) :
+    def x_test_5_random_door(self) :
         '''Your random_door() function returned an incorrect result.'''
         self.banner('Checking the result of the pick_random_door() function.''') 
         for i in range(10) :
@@ -104,7 +104,7 @@ Check the lecture notes for how to properly format a docstring.
         elif guess == 3 and car == 3 :
             return monty == 1 or monty == 2
 
-    def test_6_montys_choice(self) :
+    def x_test_6_montys_choice_bools(self) :
         '''Your montys_choice() function returned an incorrect result.'''
         self.banner('Checking the montys_choice() function.') 
         for guess in range(1, 4) :
@@ -115,15 +115,22 @@ Check the lecture notes for how to properly format a docstring.
                 if not self.monty_is_valid(car, guess, monty) :
                     self.fail('Monty made the wrong choice:\n  I chose {} the car is behind {} and Monty opened the door {}'.format(guess, car, monty))
 
-    def ref_won(self, car, guess, choice) :
-        if choice == 'switch' and guess != car :
-            return True
-        elif choice == 'stay' and guess == car :
-            return True
-        else:
-            return False
+    def test_6_montys_choice_numbers(self) :
+        '''Your montys_choice() function returned an incorrect result.'''
+        self.banner('Checking the montys_choice() function.') 
+        for guess in range(1, 4) :
+            for car in range (1, 4) :
+                monty = self.proj.montys_choice(car, guess)
+                if not self.monty_is_valid(car, guess, monty) :
+                    self.fail('Monty made the wrong choice:\n  I chose {} the car is behind {} and Monty opened the door {}'.format(guess, car, monty))
 
-    def test_7_has_won(self) :
+    def ref_won(self, car, guess, choice) :
+        if car == guess:
+            return not choice
+        else:
+            return choice
+
+    def x_test_7_has_won_bools(self) :
         '''Your has_won() function returned an incorrect result.'''
         self.banner('Checking the has_won() function.')
         stdout = sys.stdout
@@ -135,6 +142,21 @@ Check the lecture notes for how to properly format a docstring.
                     doors[car-1] = True 
                     for ss in ['stay', 'switch'] :
                         won = self.proj.has_won(*doors, guess, ss == 'switch')
+                        if won != self.ref_won(car, guess, ss) :
+                            self.fail("You told me I won when I should have lost. The car is behind door {}, the user initally cose door {} and then decided to {}".format(car, guess, ss))
+        finally:
+            sys.stdout = stdout
+
+    def test_7_has_won_numbers(self) :
+        '''Your has_won() function returned an incorrect result.'''
+        self.banner('Checking the has_won() function.')
+        stdout = sys.stdout
+        sys.stdout = None
+        try :
+            for guess in range(1, 4) :
+                for car in range(1, 4) :
+                    for ss in [True, False] :
+                        won = self.proj.has_won(car, guess, ss)
                         if won != self.ref_won(car, guess, ss) :
                             self.fail("You told me I won when I should have lost. The car is behind door {}, the user initally cose door {} and then decided to {}".format(car, guess, ss))
         finally:

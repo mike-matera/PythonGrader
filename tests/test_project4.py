@@ -13,30 +13,32 @@ from tests import Project, generate_exercises
 @generate_exercises(11, 12, 13, 14)
 class Project4(Project) : 
 
-    def test_02_correct_madlib(self):
+    def test_04_correct_madlib(self):
+        """Your program didn't produce the madlib that I expected"""
+        self.banner("Checking the output of your madlib program.")
         filename = self.find_file('project4.py')
         self.assertIsNotNone(filename, "I can't find your project file (project4.py)")
 
-        madlib = 'this is {verb} test fun {adjective} test blah {noun}'
+        madlib = 'this is {noun} test fun {adverb} test blah {verb}'
         cmdline = 'python "' + filename.as_posix() + "\" '" + madlib + "'"
-        verb = '123verb'
-        noun = '53noun'
-        adjective = '34adjective'
-        solution = madlib.format(noun=noun, verb=verb, adjective=adjective)
+        noun = 'foobar'
+        adverb = 'baz'
+        verb = 'snaz'
+        solution = madlib.format(noun=noun, verb=verb, adverb=adverb)
         
         with open('logs/test_correct_madlib.out', 'a') as log :
             test = pexpect.spawnu(cmdline, logfile=log, echo=False)
 
             for i in range(1,4) :
-                got = test.expect([pexpect.EOF, '(?i)noun', '(?i)verb', '(?i)adjective'])
+                got = test.expect([pexpect.EOF, '(?i)adverb', '(?i)verb', '(?i)noun'])
                 if got == 0 :
-                    self.fail('Your program never said "noun" "verb" or "ajective"')
+                    self.fail('Your program never said "verb" "adverb" or "noun"')
                 elif got == 1 :
-                    test.sendline(noun)
+                    test.sendline(adverb)
                 elif got == 2 : 
                     test.sendline(verb)
                 elif got == 3 :
-                    test.sendline(adjective)
+                    test.sendline(noun)
 
             got = test.expect([pexpect.EOF, solution])
             if got == 0 :
@@ -45,7 +47,9 @@ class Project4(Project) :
         self.check_docstring(filename)
 
 
-    def __test_bogus_madlib(self):
+    def test_05_bogus_madlib(self):
+        """Your program didn't handle an error (extra credit not done)"""
+        self.banner("Looking for the extra credit.")
         filename = self.find_file('project4.py')
         self.assertIsNotNone(filename, "I can't find your project file (project4.py)")
 
@@ -64,7 +68,6 @@ class Project4(Project) :
 
             self.assertNotEqual(0, test.expect([pexpect.EOF, '(?i)sorry']))
 
-        self.check_docstring(filename)
 
 class Project4_Adv(Project):
 
