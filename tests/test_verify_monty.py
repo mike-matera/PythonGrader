@@ -96,7 +96,6 @@ class VerifyMonty_XC(Project) :
         """Your extra credit simulation didn't give me the result I expected."""
         self.banner("Testing if extra credit simulation gives the right percentages.")
         filename = self.find_file('project9_xc.py')
-
         doors = random.randrange(10, 100)
         switch_target = 100 * ((doors - 1) / doors)
         stay_target = 100 * (1 / doors)
@@ -120,9 +119,14 @@ class VerifyMonty_XC(Project) :
                 self.fail('Your stay percentage ({}) is out of range. It should be between {} and {}'.format(stay_percent, stay_target-target_range, stay_target+target_range))
             test.close()
 
+    def test_2_xc_monty_docstring(self) :
+        '''Your monty_door() function doesn't have a docstring'''
+        self.banner("Looking for the docstring on extra credit monty_door()")
+        self.assertIsNotNone(self.proj.monty_door.__doc__)
+
     def test_3_xc_monty(self) :
-        """Your montys_choice function didn't return what I expected to see."""
-        self.banner("Testing the montys_choice function in the extra credit.")
+        '''Your monty_door() function returned something I didn't expect'''
+        self.banner("Testing your extra credit monty_door() function")
         for run in range(100) :
             doors = random.randrange(5, 100)
             car = random.randrange(1, doors+1)
