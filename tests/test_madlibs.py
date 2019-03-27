@@ -10,31 +10,34 @@ from selenium import webdriver
 
 from tests import Project, generate_exercises
 
-@generate_exercises(11, 12, 13, 14)
-class Project4(Project) : 
+class Project4(Project) :
+
+    def setUp(self):
+        self.proj_file = 'mad_lib.py'
+        pass
 
     def test_04_correct_madlib(self):
         """Your program didn't produce the madlib that I expected"""
         self.banner("Checking the output of your madlib program.")
-        filename = self.find_file('project4.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project4.py)")
+        filename = self.find_file(self.proj_file)
+        self.assertIsNotNone(filename, f"I can't find your project file ({self.proj_file})")
 
-        madlib = 'this is {noun} test fun {adverb} test blah {verb}'
+        madlib = 'this is {noun} test fun {adjective} test blah {verb}'
         cmdline = 'python "' + filename.as_posix() + "\" '" + madlib + "'"
         noun = 'foobar'
-        adverb = 'baz'
+        adjective = 'baz'
         verb = 'snaz'
-        solution = madlib.format(noun=noun, verb=verb, adverb=adverb)
+        solution = madlib.format(noun=noun, verb=verb, adjective=adjective)
         
         with open('logs/test_correct_madlib.out', 'a') as log :
             test = pexpect.spawnu(cmdline, logfile=log, echo=False)
 
             for i in range(1,4) :
-                got = test.expect([pexpect.EOF, '(?i)adverb', '(?i)verb', '(?i)noun'])
+                got = test.expect([pexpect.EOF, '(?i)adjective', '(?i)verb', '(?i)noun'])
                 if got == 0 :
-                    self.fail('Your program never said "verb" "adverb" or "noun"')
+                    self.fail('Your program never said "adjective" "adverb" or "noun"')
                 elif got == 1 :
-                    test.sendline(adverb)
+                    test.sendline(adjective)
                 elif got == 2 : 
                     test.sendline(verb)
                 elif got == 3 :
@@ -47,11 +50,11 @@ class Project4(Project) :
         self.check_docstring(filename)
 
 
-    def test_05_bogus_madlib(self):
+    def _xxx_test_05_bogus_madlib(self):
         """Your program didn't handle an error (extra credit not done)"""
         self.banner("Looking for the extra credit.")
-        filename = self.find_file('project4.py')
-        self.assertIsNotNone(filename, "I can't find your project file (project4.py)")
+        filename = self.find_file(self.proj_file)
+        self.assertIsNotNone(filename, f"I can't find your project file ({self.proj_file})")
 
         madlib = 'this is {bad} test fun {bogus} test blah {nothing}'
         cmdline = 'python ' + filename.as_posix() + " '" + madlib + "'"
