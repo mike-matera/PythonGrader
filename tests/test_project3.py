@@ -14,27 +14,34 @@ from tests import Project, generate_exercises
 class Project3(Project) : 
 
     def test_2_project3_docstring(self) :
+        """Your project file doesn't seem to have the right docsctring."""
+        self.banner("Checking the docstring in your program.")
         filename = self.find_file('project3.py')
         self.assertIsNotNone(filename, "I can't find your project file (project3.py)")
         self.check_docstring(filename)
 
     def test_3_run_project3(self) :
+        """Your program didn't seem to output a table"""
+        self.banner("Running your program and looking for a table.")
         filename = self.find_file('project3.py')
         self.assertIsNotNone(filename, "I can't find your project file (project3.py)")
 
         a = random.uniform(-10000, 10000)
         b = random.uniform(-10000, 10000)
 
-        with open('logs/run_project_3.html', 'a') as log :
+        with open('logs/run_project_3.txt', 'a') as log :
             test = pexpect.spawnu('python "' + filename.as_posix() + '"', logfile=log)
 
             test.sendline(f"{a}")
             test.sendline(f"{b}")
 
-            self.assertNotEqual(0, test.expect([pexpect.EOF, "(?i)<\s*table"]))
+            #self.assertNotEqual(0, test.expect([pexpect.EOF, "(?i)<\s*table"]))
+            self.assertNotEqual(0, test.expect([pexpect.EOF, f"{a}\+{b}"]))
                             
 
-class Project3Table(Project) :
+
+#class Project3Table(Project) :
+class Project3Table() :
     def setUp(self) :
         filename = self.find_file('run_project_3.html')
         if filename is None :
@@ -45,6 +52,8 @@ class Project3Table(Project) :
         self.driver.close()
 
     def test_show_table(self) :
+        '''Loading your table into a Chrome to see how it looks.'''
+        self.banner("Checking the look of your HTML table.")
         filename = self.find_file('run_project_3.html')
         self.driver.get('file:///' + filename.as_posix() )
         self.driver.get_screenshot_as_file('logs/table.png')

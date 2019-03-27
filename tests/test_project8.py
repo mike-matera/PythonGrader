@@ -24,6 +24,8 @@ class Project8(Project) :
 
 
     def test_1_do_valid_sim(self) :
+        '''Your program gave me unexpected resutlts when I tried to run a simulation.'''
+        self.banner("Running a simulation with your program.")
         filename = self.find_file('project8.py')
         self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
 
@@ -46,6 +48,8 @@ class Project8(Project) :
             test.close()
 
     def test_2_bogus_input(self) :
+        '''Your program didn't handle bogus input properly.'''
+        self.banner("Running your program with a little bogus input.") 
         filename = self.find_file('project8.py')
         self.assertIsNotNone(filename, "I can't find your project file (project8.py)")
 
@@ -81,10 +85,14 @@ class Project8_XC(Project) :
         self.proj = self.import_project(filename)
 
     def test_0_check_xc_docstring(self):
+        '''Your extra credit should have a docstring'''
+        self.banner("Checking the docstring of your extra credit.") 
         filename = self.find_file('project8_xc.py')
         self.check_docstring(filename)
 
     def test_1_xc_run(self) :
+        '''I saw somoething that I didn't expect when running your extra credit'''
+        self.banner("Running your extra credit simulation") 
         filename = self.find_file('project8_xc.py')
 
         doors = random.randrange(10, 100)
@@ -111,9 +119,13 @@ class Project8_XC(Project) :
             test.close()
 
     def test_2_xc_monty_docstring(self) :
+        '''Your monty_door() function doesn't have a docstring'''
+        self.banner("Looking for the docstring on extra credit monty_door()")
         self.assertIsNotNone(self.proj.monty_door.__doc__)
 
     def test_3_xc_monty(self) :
+        '''Your monty_door() function returned something I didn't expect'''
+        self.banner("Testing your extra credit monty_door() function")
         for run in range(100) :
             doors = random.randrange(5, 100)
             car = random.randrange(1, doors+1)
@@ -130,4 +142,4 @@ class Project8_XC(Project) :
             self.assertEqual(len(got), doors-2, 'Monty should have opened {} doors but opened {} instead.'.format(doors-2, len(got)))
             
 if __name__ == '__main__' : 
-    unittest.main(verbosity=2, exit=False)
+    unittest.main(verbosity=0, exit=False)
