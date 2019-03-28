@@ -14,20 +14,26 @@ from selenium import webdriver
 
 from tests import Project, generate_exercises, io_control
 
-from test_project5 import __Project5
+from tests.test_madlibs_improved import __MadLibsImproved
 
-class Project5Regrade(__Project5, Project) :
+
+class MadLibsRegrade(__MadLibsImproved, Project):
+    def setUp(self):
+        self.projfile = 'madlib_functions.py'
+
+
+class MadLibsFunctions(Project):
+
     def setUp(self) :
-        self.projfile = 'project6.py'
-
-@generate_exercises(18, 19, 20, 21)
-class Project6(Project):
-
-    def setUp(self) :
-        filename = self.find_file('project6.py')
-        spec = importlib.util.spec_from_file_location("project6", filename)
+        self.projfile = 'madlib_functions.py'
+        filename = self.find_file(self.projfile)
+        spec = importlib.util.spec_from_file_location("madlib_functions", filename)
         self.proj = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(self.proj)
+
+        stdin = sys.stdin
+        with self.fail_on_input():
+            spec.loader.exec_module(self.proj)
+
         self.madlib = ['test1 {} test2 {} test3 {} test4\n', 'foo\n', 'bar\n', 'bak\n']        
         self.words = ['abc\n', 'def\n', 'ghi\n']
         
@@ -37,7 +43,7 @@ class Project6(Project):
         self.assertIsNotNone(self.proj.read_madlib_file.__doc__,
                            "Your read_madlib_file() function doesn't have a docstring.")
         
-        self.assertIsNotNone(self.proj.do_madlib_input.__doc__,
+        self.assertIsNotNone(self.proj.do_ask_word.__doc__,
                            "Your do_madlib_input() function doesn't have a docstring.")
 
         self.assertIsNotNone(self.proj.display_madlib.__doc__,
@@ -52,15 +58,19 @@ class Project6(Project):
             for l in self.madlib :
                 madfile.write(l)
 
-        got = self.proj.read_madlib_file(infile)
+        with self.fail_on_input():
+            got = self.proj.read_madlib_file(infile)
+
         for i, g in enumerate(got) :
             self.assertEqual(g.strip(), self.madlib[i].strip(), "")
 
     def test_4_do_madlib_input(self) :
         '''The do_madlib_input() function did not return the words I entered.''' 
-        self.banner("Testing your do_madlib_input() function.")
-        with io_control(''.join(self.words)) as stdout :
-            words = self.proj.do_madlib_input(*self.madlib[1:])
+        self.banner("Testing your do_ask_word() function.")
+        words = []
+        with io_control(''.join(self.words)) as stdout:
+            for type in self.madlib[1:]:
+                words.append(self.proj.do_ask_word(type))
 
         for i, word in enumerate(words) :
             self.assertEqual(word.strip(), self.words[i].strip())

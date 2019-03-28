@@ -12,10 +12,7 @@ from selenium import webdriver
 from tests import Project, generate_exercises
 
 
-class Project5(Project):
-
-    def setUp(self) :
-        self.projfile = 'project5.py'
+class __MadLibsImproved:
 
     def test_2_check_docstring(self):
         '''Your program should have a valid docstring. 
@@ -92,6 +89,11 @@ of the madlib input file.'''
 
         self.assertEqual(line, self.madlib.format(*self.values), "The madlib you saved doesn't match what I expected.")
         
+
+class MadLibsImproved(Project, __MadLibsImproved):
+    def setUp(self) :
+        self.projfile = 'madlibs_improved.py'
+
 
 class Project5_Adv(Project):
 

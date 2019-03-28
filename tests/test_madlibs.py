@@ -14,7 +14,6 @@ class Project4(Project) :
 
     def setUp(self):
         self.proj_file = 'mad_lib.py'
-        pass
 
     def test_04_correct_madlib(self):
         """Your program didn't produce the madlib that I expected"""

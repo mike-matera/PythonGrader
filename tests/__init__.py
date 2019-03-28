@@ -11,6 +11,7 @@ from contextlib import contextmanager
 
 from pathlib import Path 
 
+
 @contextmanager
 def io_control(input_text='') :
     stdin_buf = io.StringIO(input_text)
@@ -92,3 +93,17 @@ class Project(unittest.TestCase) :
     def banner(self, banner) :
         print ('TEST : {}'.format(banner))
         sys.stdout.flush()
+
+    @contextmanager
+    def fail_on_input(self):
+        stdin = sys.stdin
+        sys.stdin = None
+
+        try:
+            yield
+
+        except:
+            self.fail("You used the input() function in a place you are not supposed to.")
+
+        finally:
+            sys.stdin = stdin
